@@ -1,0 +1,79 @@
+services:
+  web:
+    build: .
+    container_name: legal_aid_web
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      # Exclude venv, qdrant_data (serverless), and local caches from container
+      - /app/venv
+      - /app/__pycache__
+      - /app/.git
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+      - QDRANT_PATH=""
+    env_file:
+      - .env
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    restart: always
+    # Resource limits to prevent resource exhaustion
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4G
+        reservations:
+          cpus: "1"
+          memory: 2G
+    # Health check for orchestration systems
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Improved logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: legal_aid_qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      # Persistent storage for Qdrant data
+      - ./qdrant_storage:/qdrant/storage
+    restart: always
+    # Resource limits for Qdrant
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+        reservations:
+          cpus: "1"
+          memory: 1G
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    # Improved logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# Optional: Override settings for production deployments
+# Use: docker compose -f docker-compose.yml -f docker-compose.prod.yml up

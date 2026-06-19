@@ -1,0 +1,652 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: transparent; }
+  
+  .app { 
+    font-family: var(--font-sans);
+    background: #fff;
+    color: #0a0a0a;
+    min-height: 100vh;
+    border: 0.5px solid #e0e0e0;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+  }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 56px;
+    border-bottom: 1px solid #0a0a0a;
+    background: #0a0a0a;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .nav-logo i { font-size: 18px; }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #aaa;
+    text-decoration: none;
+    font-weight: 400;
+  }
+  .nav-links a:hover { color: #fff; }
+  .nav-badge {
+    font-size: 11px;
+    background: #fff;
+    color: #0a0a0a;
+    padding: 4px 12px;
+    border-radius: 2px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* HERO */
+  .hero {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 2.5rem 2rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  .hero-left {}
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: #888;
+  }
+  .hero-title {
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    color: #0a0a0a;
+  }
+  .hero-title em {
+    font-style: normal;
+    border-bottom: 2px solid #0a0a0a;
+  }
+  .hero-sub {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+    max-width: 340px;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .stat {
+    border-top: 2px solid #0a0a0a;
+    padding-top: 8px;
+  }
+  .stat-num {
+    font-size: 22px;
+    font-weight: 500;
+    color: #0a0a0a;
+    letter-spacing: -0.02em;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 2px;
+  }
+
+  /* QUERY BOX */
+  .hero-right {}
+  .query-card {
+    border: 1px solid #0a0a0a;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .query-header {
+    background: #0a0a0a;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .query-header-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #aaa;
+  }
+  .domain-pills {
+    display: flex;
+    gap: 6px;
+  }
+  .domain-pill {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 0.5px solid #444;
+    border-radius: 2px;
+    color: #888;
+    cursor: pointer;
+  }
+  .domain-pill.active {
+    border-color: #fff;
+    color: #fff;
+  }
+  .query-body { padding: 14px; }
+  .query-textarea {
+    width: 100%;
+    background: #f8f8f8;
+    border: 0.5px solid #ddd;
+    border-radius: 2px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #0a0a0a;
+    font-family: var(--font-sans);
+    resize: none;
+    height: 80px;
+    line-height: 1.5;
+    outline: none;
+  }
+  .query-textarea:focus { border-color: #0a0a0a; }
+  .query-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  .upload-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #888;
+    background: none;
+    border: 0.5px solid #ddd;
+    padding: 6px 12px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+  }
+  .analyze-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: #0a0a0a;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+
+  /* MAIN GRID */
+  .main {
+    display: grid;
+    grid-template-columns: 220px 1fr 200px;
+    min-height: 420px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    border-right: 1px solid #e0e0e0;
+    padding: 1.25rem 0;
+  }
+  .sidebar-section {
+    margin-bottom: 1.5rem;
+  }
+  .sidebar-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #bbb;
+    padding: 0 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 1.25rem;
+    font-size: 13px;
+    color: #444;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+  }
+  .sidebar-item:hover { color: #0a0a0a; background: #f8f8f8; }
+  .sidebar-item.active {
+    color: #0a0a0a;
+    border-left-color: #0a0a0a;
+    background: #f5f5f5;
+    font-weight: 500;
+  }
+  .sidebar-item i { font-size: 15px; }
+
+  /* CONTENT */
+  .content { padding: 1.5rem; }
+  
+  .agent-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .agent-flow-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 4px;
+  }
+  .agent-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .agent-node {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 0.5px solid #ddd;
+    border-radius: 2px;
+    font-size: 12px;
+    color: #444;
+    background: #fafafa;
+    flex: 1;
+  }
+  .agent-node.done {
+    border-color: #0a0a0a;
+    background: #0a0a0a;
+    color: #fff;
+  }
+  .agent-node.running {
+    border-color: #0a0a0a;
+    background: #fff;
+    color: #0a0a0a;
+  }
+  .agent-node.pending {
+    border-color: #e0e0e0;
+    color: #bbb;
+    background: #fafafa;
+  }
+  .agent-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+  .agent-node.running .agent-dot {
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .agent-arrow { color: #bbb; font-size: 14px; }
+
+  /* RESULT */
+  .result-section {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 1rem;
+  }
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+  .result-title {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #888;
+  }
+  .risk-badge {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+  .risk-medium { background: #f5f5f5; color: #0a0a0a; border: 0.5px solid #ddd; }
+  .risk-high { background: #0a0a0a; color: #fff; }
+
+  .result-text {
+    font-size: 13px;
+    color: #333;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+  .result-citations {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .citation {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 0.5px solid #e0e0e0;
+    border-radius: 2px;
+    border-left: 2px solid #0a0a0a;
+    font-size: 11px;
+  }
+  .citation-source { color: #0a0a0a; font-weight: 500; }
+  .citation-text { color: #888; }
+
+  /* RIGHT PANEL */
+  .right-panel {
+    border-left: 1px solid #e0e0e0;
+    padding: 1.25rem;
+  }
+  .panel-section { margin-bottom: 1.5rem; }
+  .panel-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 0.75rem;
+  }
+
+  .risk-meter { margin-bottom: 1rem; }
+  .risk-bar-bg {
+    height: 4px;
+    background: #f0f0f0;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+  .risk-bar-fill {
+    height: 100%;
+    background: #0a0a0a;
+    border-radius: 2px;
+  }
+  .risk-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #888;
+  }
+  .risk-row span:last-child { color: #0a0a0a; font-weight: 500; }
+
+  .action-list { display: flex; flex-direction: column; gap: 6px; }
+  .action-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: #444;
+    padding: 6px 8px;
+    border: 0.5px solid #e0e0e0;
+    border-radius: 2px;
+  }
+  .action-item i { font-size: 13px; color: #0a0a0a; flex-shrink: 0; margin-top: 1px; }
+
+  .cost-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 4px 0;
+    border-bottom: 0.5px solid #f0f0f0;
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-label { color: #888; }
+  .cost-val { color: #0a0a0a; font-weight: 500; font-size: 11px; }
+
+  /* FOOTER */
+  .footer {
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fafafa;
+  }
+  .disclaimer {
+    font-size: 11px;
+    color: #bbb;
+    max-width: 480px;
+    line-height: 1.5;
+  }
+  .disclaimer strong { color: #888; font-weight: 500; }
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .footer-links a {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #bbb;
+    text-decoration: none;
+  }
+  .footer-links a:hover { color: #0a0a0a; }
+</style>
+
+<h2 class="sr-only">AI-Powered Legal Aid System — UI mockup showing navigation, query input, agent pipeline, and results panels</h2>
+
+<div class="app">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">
+      <i class="ti ti-scale" aria-hidden="true"></i>
+      Lex AI
+    </div>
+    <ul class="nav-links">
+      <li><a href="#">Dashboard</a></li>
+      <li><a href="#">My Cases</a></li>
+      <li><a href="#">Documents</a></li>
+      <li><a href="#">History</a></li>
+    </ul>
+    <span class="nav-badge">Free Legal Aid</span>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">AI Legal Research</div>
+      <h1 class="hero-title">Know your <em>rights</em>,<br>without the bill.</h1>
+      <p class="hero-sub">Multi-agent legal analysis powered by real case law and statutes. Not a substitute for a lawyer — but a place to start.</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">5M+</div>
+          <div class="stat-label">Court opinions</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">7</div>
+          <div class="stat-label">AI agents</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">50</div>
+          <div class="stat-label">Jurisdictions</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="query-card">
+        <div class="query-header">
+          <span class="query-header-label">New query</span>
+          <div class="domain-pills">
+            <span class="domain-pill active">Tenant</span>
+            <span class="domain-pill">Employment</span>
+            <span class="domain-pill">Contract</span>
+          </div>
+        </div>
+        <div class="query-body">
+          <textarea class="query-textarea" placeholder="Describe your legal situation in plain language...">My landlord hasn't returned my security deposit after 52 days. California. I have receipts for all payments.</textarea>
+          <div class="query-actions">
+            <button class="upload-btn"><i class="ti ti-paperclip" aria-hidden="true"></i> Attach document</button>
+            <button class="analyze-btn" onclick="sendPrompt('Build the full FastAPI backend for the Legal Aid System')">Analyze ↗</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN 3-COL -->
+  <div class="main">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Agents</div>
+        <div class="sidebar-item done"><i class="ti ti-sort-descending" aria-hidden="true"></i> Orchestrator</div>
+        <div class="sidebar-item done"><i class="ti ti-tag" aria-hidden="true"></i> Classifier</div>
+        <div class="sidebar-item done"><i class="ti ti-database-search" aria-hidden="true"></i> Researcher</div>
+        <div class="sidebar-item active"><i class="ti ti-file-text" aria-hidden="true"></i> Doc Analyzer</div>
+        <div class="sidebar-item pending"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Risk Assessor</div>
+        <div class="sidebar-item pending"><i class="ti ti-writing" aria-hidden="true"></i> Synthesizer</div>
+        <div class="sidebar-item pending"><i class="ti ti-shield" aria-hidden="true"></i> Safety Guard</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Sources found</div>
+        <div class="sidebar-item"><i class="ti ti-gavel" aria-hidden="true"></i> Cal. Civil § 1950.5</div>
+        <div class="sidebar-item"><i class="ti ti-book" aria-hidden="true"></i> Granberry v. Islay</div>
+        <div class="sidebar-item"><i class="ti ti-book" aria-hidden="true"></i> Holt v. Moran (2019)</div>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="content">
+      <div class="agent-flow">
+        <div class="agent-flow-label">Pipeline — active run</div>
+        <div class="agent-row">
+          <div class="agent-node done"><div class="agent-dot"></div> Orchestrator — routed to tenant rights</div>
+        </div>
+        <div class="agent-row">
+          <div class="agent-node done"><div class="agent-dot"></div> Classifier — tenant_rights · CA · confidence 0.97</div>
+        </div>
+        <div class="agent-row">
+          <div class="agent-node done"><div class="agent-dot"></div> Researcher — 3 statutes · 4 cases retrieved</div>
+        </div>
+        <div class="agent-row">
+          <div class="agent-node running"><div class="agent-dot"></div> Doc Analyzer — reading uploaded receipts...</div>
+        </div>
+        <div class="agent-row">
+          <div class="agent-node pending"><div class="agent-dot"></div> Risk Assessor</div>
+          <i class="ti ti-arrow-right agent-arrow" aria-hidden="true"></i>
+          <div class="agent-node pending"><div class="agent-dot"></div> Synthesizer</div>
+          <i class="ti ti-arrow-right agent-arrow" aria-hidden="true"></i>
+          <div class="agent-node pending"><div class="agent-dot"></div> Safety Guard</div>
+        </div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-header">
+          <span class="result-title">Preliminary findings</span>
+          <span class="risk-badge risk-high">Risk: High · Act now</span>
+        </div>
+        <p class="result-text">
+          Under California Civil Code § 1950.5, your landlord was required to return your security deposit within <strong>21 days</strong> of move-out. At 52 days, they are 31 days past the legal deadline. You may be entitled to the full deposit <strong>plus a penalty of up to 2× the deposit amount</strong> if the court finds the withholding was made in bad faith.
+        </p>
+        <div class="result-citations">
+          <div class="citation">
+            <div>
+              <div class="citation-source">Cal. Civil Code § 1950.5(g)</div>
+              <div class="citation-text">21-day deadline for return of deposit or itemized statement of deductions.</div>
+            </div>
+          </div>
+          <div class="citation">
+            <div>
+              <div class="citation-source">Granberry v. Islay Investments (1995)</div>
+              <div class="citation-text">CA Supreme Court — bad faith withholding triggers 2× penalty without proof of actual damages.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="right-panel">
+      <div class="panel-section">
+        <div class="panel-label">Risk dimensions</div>
+        <div class="risk-meter">
+          <div class="risk-row"><span>Legal</span><span>8 / 10</span></div>
+          <div class="risk-bar-bg"><div class="risk-bar-fill" style="width:80%"></div></div>
+        </div>
+        <div class="risk-meter">
+          <div class="risk-row"><span>Financial</span><span>7 / 10</span></div>
+          <div class="risk-bar-bg"><div class="risk-bar-fill" style="width:70%"></div></div>
+        </div>
+        <div class="risk-meter">
+          <div class="risk-row"><span>Time sensitivity</span><span>9 / 10</span></div>
+          <div class="risk-bar-bg"><div class="risk-bar-fill" style="width:90%"></div></div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-label">Immediate actions</div>
+        <div class="action-list">
+          <div class="action-item"><i class="ti ti-mail" aria-hidden="true"></i> Send formal demand letter today</div>
+          <div class="action-item"><i class="ti ti-building" aria-hidden="true"></i> File small claims (limit $12,500 CA)</div>
+          <div class="action-item"><i class="ti ti-clock" aria-hidden="true"></i> SOL: 3 years from move-out date</div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-label">Query cost</div>
+        <div class="cost-row"><span class="cost-label">Input tokens</span><span class="cost-val">4,280</span></div>
+        <div class="cost-row"><span class="cost-label">Output tokens</span><span class="cost-val">812</span></div>
+        <div class="cost-row"><span class="cost-label">RAG calls</span><span class="cost-val">3</span></div>
+        <div class="cost-row"><span class="cost-label">Total cost</span><span class="cost-val">$0.009</span></div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p class="disclaimer"><strong>Not legal advice.</strong> This is general legal information only. For your specific situation, consult a licensed attorney in California. Free legal aid: Bay Area Legal Aid 415-982-1300.</p>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Sources</a>
+    </div>
+  </footer>
+
+</div>

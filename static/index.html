@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lex AI — Local Legal Aid Assistant</title>
+    <meta name="description" content="Multi-agent legal analysis powered by real case law and statutes. Not a substitute for a lawyer — but a place to start.">
+    <!-- Google Fonts (Outfit & Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tabler Icons CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- NAV -->
+        <nav class="nav">
+            <div class="nav-logo">
+                <i class="ti ti-scale" aria-hidden="true"></i>
+                Lex AI
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" id="nav-dashboard" class="nav-link active">Dashboard</a></li>
+                <li><a href="#" id="nav-cases" class="nav-link">My Cases</a></li>
+                <li><a href="#" id="nav-docs" class="nav-link">Documents</a></li>
+                <li><a href="#" id="nav-history" class="nav-link">History</a></li>
+            </ul>
+            <span class="nav-badge">Free Legal Aid</span>
+        </nav>
+
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dashboard" class="tab-view active">
+            <!-- HERO & QUERY PANEL -->
+            <section class="hero">
+                <div class="hero-left">
+                    <div class="hero-eyebrow">AI Legal Research</div>
+                    <h1 class="hero-title">Know your <em>rights</em>,<br>without the bill.</h1>
+                    <p class="hero-sub">Multi-agent legal analysis powered by real case law and statutes. Not a substitute for a lawyer — but a place to start.</p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <div class="stat-num">5M+</div>
+                            <div class="stat-label">Court opinions</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-num">7</div>
+                            <div class="stat-label">AI agents</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-num">50</div>
+                            <div class="stat-label">Jurisdictions</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-right">
+                    <div class="query-card">
+                        <div class="query-header">
+                            <span class="query-header-label">New query</span>
+                            <div class="domain-pills">
+                                <span class="domain-pill active" data-domain="tenant">Tenant</span>
+                                <span class="domain-pill" data-domain="employment">Employment</span>
+                                <span class="domain-pill" data-domain="contract">Contract</span>
+                            </div>
+                        </div>
+                        <div class="query-body">
+                            <textarea id="chat-input" class="query-textarea" placeholder="Describe your legal situation in plain language..."></textarea>
+                            <div class="query-actions">
+                                <input type="file" id="file-input" accept=".pdf" style="display: none;">
+                                <button id="upload-btn" class="upload-btn">
+                                    <i class="ti ti-paperclip" aria-hidden="true"></i> Attach document
+                                </button>
+                                <button id="submit-btn" class="analyze-btn">
+                                    Analyze <i class="ti ti-arrow-up-right"></i>
+                                </button>
+                            </div>
+                            <!-- Upload Indicator -->
+                            <div id="upload-status" class="upload-status" style="display: none;">
+                                <div class="spinner"></div>
+                                <span id="upload-status-text">Uploading document...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MAIN 3-COL -->
+            <div class="main">
+                <!-- SIDEBAR -->
+                <aside class="sidebar">
+                    <div class="sidebar-section">
+                        <div class="sidebar-label">Agents</div>
+                        <div id="agent-orchestrate" class="sidebar-item pending"><i class="ti ti-sort-descending" aria-hidden="true"></i> Orchestrator</div>
+                        <div id="agent-classify" class="sidebar-item pending"><i class="ti ti-tag" aria-hidden="true"></i> Classifier</div>
+                        <div id="agent-research" class="sidebar-item pending"><i class="ti ti-database-search" aria-hidden="true"></i> Researcher</div>
+                        <div id="agent-analyze-docs" class="sidebar-item pending"><i class="ti ti-file-text" aria-hidden="true"></i> Doc Analyzer</div>
+                        <div id="agent-assess-risk" class="sidebar-item pending"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Risk Assessor</div>
+                        <div id="agent-synthesize" class="sidebar-item pending"><i class="ti ti-writing" aria-hidden="true"></i> Synthesizer</div>
+                        <div id="agent-safety-check" class="sidebar-item pending"><i class="ti ti-shield" aria-hidden="true"></i> Safety Guard</div>
+                    </div>
+                    <div class="sidebar-section">
+                        <div class="sidebar-label">Sources found</div>
+                        <div id="sources-list" class="documents-list">
+                            <!-- Dynamic citations listed here -->
+                            <div class="sidebar-item empty-sources"><i class="ti ti-info-circle" aria-hidden="true"></i> None loaded yet</div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- CONTENT / PIPELINE FLOW & RESULTS -->
+                <main class="content">
+                    <div class="agent-flow">
+                        <div class="agent-flow-label">Pipeline — active run</div>
+                        <div class="agent-row">
+                            <div id="flow-orchestrate" class="agent-node pending"><div class="agent-dot"></div> <span class="flow-text">Orchestrator — idle</span></div>
+                        </div>
+                        <div class="agent-row">
+                            <div id="flow-classify" class="agent-node pending"><div class="agent-dot"></div> <span class="flow-text">Classifier — idle</span></div>
+                        </div>
+                        <div class="agent-row">
+                            <div id="flow-research" class="agent-node pending"><div class="agent-dot"></div> <span class="flow-text">Researcher — idle</span></div>
+                        </div>
+                        <div class="agent-row">
+                            <div id="flow-analyze-docs" class="agent-node pending"><div class="agent-dot"></div> <span class="flow-text">Doc Analyzer — idle</span></div>
+                        </div>
+                        <div class="agent-row">
+                            <div id="flow-assess-risk" class="agent-node pending"><div class="agent-dot"></div> <span class="flow-text">Risk Assessor</span></div>
+                            <i class="ti ti-arrow-right agent-arrow" aria-hidden="true"></i>
+                            <div id="flow-synthesize" class="agent-node pending"><div class="agent-dot"></div> <span class="flow-text">Synthesizer</span></div>
+                            <i class="ti ti-arrow-right agent-arrow" aria-hidden="true"></i>
+                            <div id="flow-safety-check" class="agent-node pending"><div class="agent-dot"></div> <span class="flow-text">Safety Guard</span></div>
+                        </div>
+                    </div>
+
+                    <div class="result-section">
+                        <div class="result-header">
+                            <span class="result-title">Analysis Findings</span>
+                            <span id="risk-badge" class="risk-badge risk-medium">Risk: N/A</span>
+                        </div>
+                        <div id="result-text" class="result-text">
+                            Welcome to Lex AI. Please describe your situation in the query box above and press "Analyze" to execute the local legal agent pipeline.
+                        </div>
+                        <div id="citations-container" class="result-citations">
+                            <!-- Citations card structures inserted dynamically here -->
+                        </div>
+                    </div>
+                </main>
+
+                <!-- RIGHT PANEL / RISK & OBLIGATIONS -->
+                <aside class="right-panel">
+                    <div class="panel-section">
+                        <div class="panel-label">Risk dimensions</div>
+                        <div class="risk-meter">
+                            <div class="risk-row"><span>Legal</span><span id="legal-risk-val">1 / 10</span></div>
+                            <div class="risk-bar-bg"><div id="legal-risk-bar" class="risk-bar-fill" style="width:10%"></div></div>
+                        </div>
+                        <div class="risk-meter">
+                            <div class="risk-row"><span>Financial</span><span id="financial-risk-val">1 / 10</span></div>
+                            <div class="risk-bar-bg"><div id="financial-risk-bar" class="risk-bar-fill" style="width:10%"></div></div>
+                        </div>
+                        <div class="risk-meter">
+                            <div class="risk-row"><span>Time sensitivity</span><span id="time-sensitivity-val">1 / 10</span></div>
+                            <div class="risk-bar-bg"><div id="time-sensitivity-bar" class="risk-bar-fill" style="width:10%"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <div class="panel-label">Immediate actions</div>
+                        <div id="immediate-actions-list" class="action-list">
+                            <div class="action-item"><i class="ti ti-help" aria-hidden="true"></i> No actions requested yet.</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <div class="panel-label">Query cost</div>
+                        <div class="cost-row"><span class="cost-label">Input tokens</span><span id="cost-input-tokens" class="cost-val">0</span></div>
+                        <div class="cost-row"><span class="cost-label">Output tokens</span><span id="cost-output-tokens" class="cost-val">0</span></div>
+                        <div class="cost-row"><span class="cost-label">RAG calls</span><span id="cost-rag-calls" class="cost-val">0</span></div>
+                        <div class="cost-row"><span class="cost-label">Total cost</span><span id="cost-total-cost" class="cost-val">$0.000</span></div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- MY CASES VIEW -->
+        <div id="view-cases" class="tab-view">
+            <div class="view-header">
+                <h2 class="view-title">My Cases</h2>
+                <p class="view-subtitle">Overview of your analyzed cases, legal risk categories, and attorney suggestions.</p>
+            </div>
+            <div id="cases-list" class="cases-grid">
+                <!-- Populated dynamically -->
+                <div class="no-cases-card">
+                    <i class="ti ti-folder-open"></i>
+                    <h3>No cases analyzed yet</h3>
+                    <p>Run a query in the Dashboard to analyze your legal situation and build a case file.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DOCUMENTS VIEW -->
+        <div id="view-docs" class="tab-view">
+            <div class="view-header">
+                <h2 class="view-title">Documents</h2>
+                <p class="view-subtitle">Ingest and manage legal contracts, receipts, or leases in the vector store.</p>
+            </div>
+            <div class="docs-layout">
+                <div class="docs-upload-card">
+                    <div id="drag-drop-zone" class="drag-zone">
+                        <i class="ti ti-cloud-upload"></i>
+                        <h3>Drag & drop PDF files here</h3>
+                        <p>or click to browse from your device</p>
+                        <input type="file" id="docs-tab-file-input" accept=".pdf" style="display: none;">
+                    </div>
+                </div>
+                <div class="docs-table-card">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>File Size</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="docs-table-body">
+                            <!-- Populated dynamically -->
+                            <tr>
+                                <td colspan="3" class="empty-table-cell">No documents uploaded.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY VIEW -->
+        <div id="view-history" class="tab-view">
+            <div class="view-header">
+                <h2 class="view-title">Query History</h2>
+                <p class="view-subtitle">Review your past queries, retrieved references, and agent findings.</p>
+            </div>
+            <div class="history-layout">
+                <aside class="history-sidebar">
+                    <div class="sidebar-label">Past Inquiries</div>
+                    <div id="history-items-list" class="history-list">
+                        <!-- Populated dynamically -->
+                        <div class="history-item-placeholder">No history found.</div>
+                    </div>
+                </aside>
+                <main class="history-main-content">
+                    <div id="history-detail-empty" class="history-detail-empty">
+                        <i class="ti ti-message-square"></i>
+                        <h3>Select an inquiry</h3>
+                        <p>Choose a past query from the sidebar to view full case files and agent traces.</p>
+                    </div>
+                    <div id="history-detail-view" class="history-detail-view" style="display: none;">
+                        <div class="history-detail-header">
+                            <h3 id="history-detail-query">Query Text</h3>
+                            <span id="history-detail-badge" class="risk-badge">Risk</span>
+                        </div>
+                        <div id="history-detail-answer" class="result-text">
+                            Answer text will be rendered here.
+                        </div>
+                        <div class="history-trace-section">
+                            <div class="sidebar-label">Agent Decisions Log</div>
+                            <ul id="history-detail-trace" class="history-trace-list">
+                                <!-- Populated dynamically -->
+                            </ul>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p id="footer-disclaimer" class="disclaimer"><strong>Not legal advice.</strong> This is general legal information only. For your specific situation, consult a licensed attorney. No documents analyzed yet.</p>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Sources</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

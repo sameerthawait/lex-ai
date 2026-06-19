@@ -1,0 +1,55 @@
+# Dependencies
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.Python
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+README.rst
+
+# Testing and logs
+.pytest_cache/
+.coverage
+htmlcov/
+task-*.log
+
+# Local data (development only)
+data/
+documents/
+qdrant_data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.circleci/
+
+# Other
+.dockerignore
+docker-compose.*.yml
+*.pem
+*.key
